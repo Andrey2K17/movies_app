@@ -27,6 +27,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "BASE_URL", '"https://kinopoiskapiunofficial.tech"'
+
+        }
+        debug {
+            buildConfigField "String", "BASE_URL", '"https://kinopoiskapiunofficial.tech"'
         }
     }
     buildFeatures {
@@ -76,6 +81,8 @@ dependencies {
     implementation dataStore
 
     implementation refreshLayout
+
+    implementation "androidx.core:core-splashscreen:1.0.0-alpha02"
 
     implementation project(path: ':domain')
     implementation project(path: ':data')
