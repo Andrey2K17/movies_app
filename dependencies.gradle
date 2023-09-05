@@ -1,0 +1,63 @@
+ext {
+    // Retrofit
+    def retrofitVersion = '2.9.0'
+    retrofit = [
+            core               : "com.squareup.retrofit2:retrofit:$retrofitVersion",
+            gsonConverter      : "com.squareup.retrofit2:converter-gson:$retrofitVersion",
+            scalarsConverter   : "com.squareup.retrofit2:converter-scalars:$retrofitVersion",
+            loggingInterceptors: 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2',
+    ]
+
+    // KotlinX
+    kotlinx = [
+            serialization: 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2',
+            coroutines   : 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1',
+            collections   : 'org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.5'
+    ]
+
+    androidX = [
+            core: 'androidx.core:core-ktx:1.8.0',
+            appCompat: 'androidx.appcompat:appcompat:1.6.1',
+            material: 'com.google.android.material:material:1.5.0',
+            constraintlayout: 'androidx.constraintlayout:constraintlayout:2.1.4',
+            activity: 'androidx.activity:activity-ktx:1.7.1',
+            fragment: 'androidx.fragment:fragment-ktx:1.5.7',
+            recyclerview: 'androidx.recyclerview:recyclerview:1.3.0'
+    ]
+
+    // Hilt DI
+    def hiltVersion = "2.44"
+    hilt = [
+            core           : "com.google.dagger:hilt-android:$hiltVersion",
+            androidCompiler: "com.google.dagger:hilt-android-compiler:$hiltVersion",
+            compiler       : 'androidx.hilt:hilt-compiler:1.0.0'
+    ]
+
+    // Navigation
+    def navigationVersion = "2.5.3"
+    navigation = [
+            fragment: "androidx.navigation:navigation-fragment-ktx:$navigationVersion",
+            ui      : "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+    ]
+
+    // Room
+    def roomVersion = '2.5.1'
+    room = [
+            core    : "androidx.room:room-runtime:$roomVersion",
+            ktx     : "androidx.room:room-ktx:$roomVersion",
+            paging  : "androidx.room:room-paging:$roomVersion",
+            test    : "androidx.room:room-testing:$roomVersion",
+            compiler: "androidx.room:room-compiler:$roomVersion"
+    ]
+
+    //Load Image from Internet
+    coil = "io.coil-kt:coil:2.4.0"
+
+    countryCodePicker = 'com.hbb20:ccp:2.7.2'
+
+    smsConfirmationView = "com.github.fraggjkee:sms-confirmation-view:1.7.1"
+
+    dataStore = "androidx.datastore:datastore:1.0.0"
+
+    refreshLayout = 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+}
