@@ -17,8 +17,6 @@ internal inline fun <ResponseType, ResultType> networkBoundResource(
     emit(Resource.Loading<ResultType>())
 
     val result = remoteCall.invoke()
-    Log.d("test123", "code: ${result.code()}")
-    Log.d("test123", "code: ${result.code() == 200 }")
     when {
 //        result.code().toString()
 //            .startsWith("2") -> emit(Resource.Success<ResultType>(mapper(result.body()!!)))

@@ -18,7 +18,8 @@ data class Films(
         val rating: String,
         val ratingChange: Any?,
         val ratingVoteCount: Int,
-        val year: String
+        val year: String,
+        val favorite: Boolean = false
     ) {
         data class Country(
             val country: String

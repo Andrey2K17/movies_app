@@ -1,0 +1,70 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="film"
+            type="com.pg13.domain.entities.Films.Film" />
+
+        <import type="com.pg13.moviesapp.R" />
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/gray"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/dish_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                app:imageUrl="@{film.posterUrlPreview}" />
+
+                    <TextView
+                        android:id="@+id/ratingTv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="@{film.rating}"
+                        android:textSize="18sp"
+                        android:paddingHorizontal="4dp"
+                        android:textColor="@color/white"
+                        android:background="@color/design_default_color_primary_dark"
+                        android:textStyle="bold"
+                        tools:text="Test title" />
+
+                    <CheckedTextView
+                        android:id="@+id/favoriteCtv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/padding_8dp"
+                        android:layout_gravity="bottom|end"
+                        android:background="@drawable/shape_background"
+                        android:padding="@dimen/padding_4dp"
+                        app:checkedChange="@{film.favorite}"
+                        app:resChecked="@{R.drawable.favorite}"
+                        app:resUnchecked="@{R.drawable.add_favorite}" />
+        </FrameLayout>
+
+                    <TextView
+                        android:id="@+id/title_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@{film.nameRu}"
+                        android:textSize="14sp"
+                        android:lines="2"
+                        android:maxLines="2"
+                        android:ellipsize="end"
+                        tools:text="Зеленая миля" />
+    </LinearLayout>
+</layout>

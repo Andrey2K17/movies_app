@@ -1,4 +1,4 @@
-package com.pg13.moviesapp.ui.films
+package com.pg13.moviesapp.ui.top_flims
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
