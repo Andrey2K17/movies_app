@@ -5,5 +5,5 @@ import com.pg13.domain.entities.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface FilmsTopRepository {
-    fun getFilmsTop(): Flow<Resource<Films>>
+    fun getFilmsTop(page: Int): Flow<Resource<Films>>
 }

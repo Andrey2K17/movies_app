@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 class CloudDataSourceGetTopFilms(
     private val api: RetrofitClient
 ) : CloudDataSource<Films> {
-    override fun getData(): Flow<Resource<Films>> = networkBoundResource(
-        { api.getFilmsTop() },
+    override fun getData(page: Int): Flow<Resource<Films>> = networkBoundResource(
+        { api.getFilmsTop(page = page) },
         { cloudData -> cloudData.mapToDomain() }
     )
 }

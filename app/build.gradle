@@ -21,21 +21,21 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'BASE_URL', '"https://kinopoiskapiunofficial.tech"'
+        buildConfigField 'String', 'API_KEY', '"04b1f88b-77ac-4aa4-acbd-1b05279f655a"'
+
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField "String", "BASE_URL", '"https://kinopoiskapiunofficial.tech"'
-
-        }
-        debug {
-            buildConfigField "String", "BASE_URL", '"https://kinopoiskapiunofficial.tech"'
         }
     }
     buildFeatures {
         buildConfig = true
+        viewBinding true
     }
 
     dataBinding {
@@ -83,6 +83,9 @@ dependencies {
     implementation refreshLayout
 
     implementation "androidx.core:core-splashscreen:1.0.0-alpha02"
+
+    implementation "androidx.paging:paging-runtime-ktx:3.2.1"
+    implementation "androidx.paging:paging-common-ktx:3.2.1"
 
     implementation project(path: ':domain')
     implementation project(path: ':data')

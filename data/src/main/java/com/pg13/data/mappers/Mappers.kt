@@ -1,6 +1,6 @@
 package com.pg13.data.mappers
 
-import com.pg13.data.entities.FilmsRemote
+import com.pg13.data.entities.remote.FilmsRemote
 import com.pg13.domain.entities.Films
 
 fun FilmsRemote.mapToDomain(): Films = Films(films.map { it.mapToDomain() }, pagesCount);

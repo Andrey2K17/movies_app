@@ -9,5 +9,5 @@ import kotlinx.coroutines.flow.Flow
 class FilmTopRepositoryImpl(
     private val cloudDataSource: CloudDataSource<Films>
 ): FilmsTopRepository {
-    override fun getFilmsTop(): Flow<Resource<Films>> = cloudDataSource.getData()
+    override fun getFilmsTop(page: Int): Flow<Resource<Films>> = cloudDataSource.getData(page)
 }

@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 
 class GetTopFilmsUseCase(private val repository: FilmsTopRepository) {
 
-    operator fun invoke(): Flow<Resource<Films>> = repository.getFilmsTop()
+    operator fun invoke(page: Int): Flow<Resource<Films>> = repository.getFilmsTop(page)
 }

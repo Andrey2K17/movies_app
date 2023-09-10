@@ -1,11 +1,16 @@
 package com.pg13.data.api
 
-import com.pg13.data.entities.FilmsRemote
+import androidx.annotation.IntRange
+import com.pg13.data.entities.remote.FilmsRemote
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 interface RetrofitClient {
-    @GET("api/v2.2/films/top?type=TOP_250_BEST_FILMS&page=1")
-    suspend fun getFilmsTop(): Response<FilmsRemote>
+    @GET("api/v2.2/films/top")
+    suspend fun getFilmsTop(
+        @Query("type") type: String = "TOP_250_BEST_FILMS",
+        @Query("page") @IntRange(from = 1) page: Int = 1
+    ): Response<FilmsRemote>
 
 }

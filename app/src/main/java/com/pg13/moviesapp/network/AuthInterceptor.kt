@@ -1,5 +1,6 @@
 package com.pg13.moviesapp.network
 
+import com.pg13.moviesapp.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
@@ -9,8 +10,13 @@ class AuthInterceptor @Inject constructor():Interceptor {
         return chain.proceed(
             chain.request()
                 .newBuilder()
-                .addHeader("X-API-KEY", "04b1f88b-77ac-4aa4-acbd-1b05279f655a")
+                .addHeader(API_KEY_HEADER, BuildConfig.API_KEY)
                 .build()
         )
+    }
+
+    private companion object {
+
+        private const val API_KEY_HEADER = "X-Api-Key"
     }
 }

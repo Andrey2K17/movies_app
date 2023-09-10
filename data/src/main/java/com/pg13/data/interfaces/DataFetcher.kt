@@ -4,5 +4,5 @@ import com.pg13.domain.entities.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface DataFetcher<E> {
-    fun getData(): Flow<Resource<E>>
+    fun getData(page: Int = 1): Flow<Resource<E>>
 }
