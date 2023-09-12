@@ -53,3 +53,20 @@ fun <T> Flow<Resource<T>>.handleException()
         ) // неизвестная ошибка
     }
 }
+
+internal inline fun <ResponseType, ResultType> networkBoundResource(
+    crossinline remoteCall: suspend () -> Response<ResponseType>,
+    crossinline cachedData: suspend (ResponseType) -> Unit,
+    crossinline mapper: (ResponseType) -> ResultType,
+): Flow<Resource<ResultType>> = flow {
+    emit(Resource.Loading())
+
+    val result = remoteCall.invoke()
+    when (result.code()) {
+        200 -> {
+            cachedData(result.body()!!)
+            emit(Resource.Success(mapper(result.body()!!)))
+        }
+        else -> emit(Resource.Error(exception = HttpException(result)))
+    }
+}.handleException()

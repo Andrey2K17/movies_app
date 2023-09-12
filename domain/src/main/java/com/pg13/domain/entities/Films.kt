@@ -5,6 +5,7 @@ data class Films(
     val pagesCount: Int
 ) {
     data class Film(
+        val id: Int,
         val countries: List<Country>,
         val filmId: Int,
         val filmLength: String,

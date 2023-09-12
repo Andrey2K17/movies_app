@@ -1,7 +1,7 @@
 package com.pg13.moviesapp.di
 
 import com.google.gson.GsonBuilder
-import com.pg13.data.api.RetrofitClient
+import com.pg13.data.remote.service.ApiService
 import com.pg13.moviesapp.BuildConfig
 import com.pg13.moviesapp.network.AuthInterceptor
 import dagger.Module
@@ -21,8 +21,8 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun provideClient(retrofit: Retrofit): RetrofitClient {
-        return retrofit.create(RetrofitClient::class.java)
+    fun provideClient(retrofit: Retrofit): ApiService {
+        return retrofit.create(ApiService::class.java)
     }
 
     private fun configureOkHttpClientBuilder(

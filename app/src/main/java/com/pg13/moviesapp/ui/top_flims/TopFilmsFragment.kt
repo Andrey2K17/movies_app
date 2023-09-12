@@ -2,10 +2,8 @@ package com.pg13.moviesapp.ui.top_flims
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.paging.CombinedLoadStates
-import androidx.paging.LoadState
+import androidx.recyclerview.widget.RecyclerView
 import com.pg13.moviesapp.R
 import com.pg13.moviesapp.databinding.FragmentTopFilmsBinding
 import com.pg13.moviesapp.ui.base.ViewBindingFragment
@@ -13,7 +11,6 @@ import com.pg13.moviesapp.utils.launchOnLifecycle
 import com.pg13.mycitchen.ui.rv.HorizontalSpaceItemDecoration
 import com.pg13.mycitchen.ui.rv.VerticalSpaceItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class TopFilmsFragment : ViewBindingFragment<FragmentTopFilmsBinding>() {
@@ -22,25 +19,30 @@ class TopFilmsFragment : ViewBindingFragment<FragmentTopFilmsBinding>() {
     private val viewModel: FilmsViewModel by viewModels()
 
     private val adapter: TopFilmsAdapterPaging by lazy {
-        TopFilmsAdapterPaging(this.requireContext())
+        TopFilmsAdapterPaging().apply {
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
-                FilmsLoaderStateAdapter(),
-                FilmsLoaderStateAdapter()
-            )
-
-            adapter.addLoadStateListener { state: CombinedLoadStates ->
-                recyclerView.isVisible = state.refresh != LoadState.Loading
-                progress.isVisible = state.refresh == LoadState.Loading
-            }
+            recyclerView.adapter = adapter
+//            recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+//                FilmsLoaderStateAdapter(),
+//                FilmsLoaderStateAdapter()
+//            )
+//
+//            adapter.addLoadStateListener { state: CombinedLoadStates ->
+//                recyclerView.isVisible = state.refresh != LoadState.Loading
+//                progress.isVisible = state.refresh == LoadState.Loading
+//            }
 
             launchOnLifecycle {
-                viewModel.films.collectLatest(adapter::submitData)
+                viewModel.films.collect { data ->
+                    adapter.submitData(data)
+                }
             }
 
             recyclerView.addItemDecoration(

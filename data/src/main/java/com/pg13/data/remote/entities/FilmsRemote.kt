@@ -1,4 +1,4 @@
-package com.pg13.data.entities.remote
+package com.pg13.data.remote.entities
 
 
 

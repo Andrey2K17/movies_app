@@ -11,23 +11,37 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/query"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/padding_16dp"
-            android:layout_marginTop="@dimen/padding_16dp"
-            android:layout_marginEnd="@dimen/padding_16dp"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            />
+            android:orientation="horizontal" >
+            <EditText
+                android:id="@+id/query"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_16dp"
+                android:layout_marginTop="@dimen/padding_16dp"
+                android:layout_marginEnd="@dimen/padding_16dp"
+                android:focusable="false"
+                android:focusableInTouchMode="true"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                />
+
+            <Button
+                android:id="@+id/buttonTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:fastScrollEnabled="false"
             app:spanCount="2"
-            android:useDefaultMargins="false"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
         <ProgressBar

@@ -19,20 +19,21 @@ class FilmsPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Films.Film> {
         try {
-            val page: Int = params.key ?: 1
-            val pageSize: Int = params.loadSize
-
-            val filmsFlow = getTopFilmsUseCase.invoke(page)
-            val filmsData: Resource<Films> = filmsFlow.toList().last()
-
-            if (filmsData is Resource.Error) {
-                return LoadResult.Error(Exception(filmsData.message ?: "Произошла ошибка"))
-            } else {
-                val films = checkNotNull(filmsData.data)
-                val nextKey = if (films.films.size < pageSize) null else page + 1
-                val prevKey = if (page == 1) null else page - 1
-                return LoadResult.Page(films.films, prevKey, nextKey)
-            }
+            return LoadResult.Error(Exception())
+//            val page: Int = params.key ?: 1
+//            val pageSize: Int = params.loadSize
+//
+//            val filmsFlow = getTopFilmsUseCase.invoke()
+//            val filmsData: Resource<Films> = filmsFlow.toList().last()
+//
+//            if (filmsData is Resource.Error) {
+//                return LoadResult.Error(Exception(filmsData.message ?: "Произошла ошибка"))
+//            } else {
+//                val films = checkNotNull(filmsData.data)
+//                val nextKey = if (films.films.size < pageSize) null else page + 1
+//                val prevKey = if (page == 1) null else page - 1
+//                return LoadResult.Page(films.films, prevKey, nextKey)
+//            }
         } catch (e: HttpException) {
             return LoadResult.Error(e)
         } catch (e: Exception) {

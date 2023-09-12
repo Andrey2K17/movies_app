@@ -1,6 +1,5 @@
 package com.pg13.moviesapp.ui.top_flims
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -11,8 +10,10 @@ import com.pg13.domain.entities.Films
 import com.pg13.moviesapp.R
 import com.pg13.moviesapp.databinding.FilmItemBinding
 
-class TopFilmsAdapterPaging(context: Context):
-PagingDataAdapter<Films.Film, TopFilmsAdapterPaging.TopFilmsViewHolder>(TopFilmsDiffCallbackPaging){
+class TopFilmsAdapterPaging :
+    PagingDataAdapter<Films.Film, TopFilmsAdapterPaging.TopFilmsViewHolder>(
+        TopFilmsDiffCallbackPaging
+    ) {
 
     class TopFilmsViewHolder(val binding: FilmItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -38,6 +39,6 @@ object TopFilmsDiffCallbackPaging : DiffUtil.ItemCallback<Films.Film>() {
     }
 
     override fun areContentsTheSame(oldItem: Films.Film, newItem: Films.Film): Boolean {
-        return oldItem.filmId == newItem.filmId
+        return oldItem.id == newItem.id
     }
 }

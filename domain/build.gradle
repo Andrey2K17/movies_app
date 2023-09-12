@@ -13,4 +13,5 @@ java {
 dependencies {
     implementation kotlinx.serialization
     implementation kotlinx.coroutines
+    implementation "androidx.paging:paging-common-ktx:3.2.1"
 }
