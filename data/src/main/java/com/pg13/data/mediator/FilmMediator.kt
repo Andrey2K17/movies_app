@@ -15,6 +15,7 @@ import com.pg13.domain.entities.Resource
 import kotlinx.coroutines.flow.toList
 import retrofit2.HttpException
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalPagingApi::class)
 class FilmMediator(
@@ -26,20 +27,19 @@ class FilmMediator(
 
     private val remoteKeyDao = database.remoteKeyDao()
     private val filmsDao = database.filmDao()
+    override suspend fun initialize(): InitializeAction {
+        val remoteKey = database.withTransaction {
+            remoteKeyDao.remoteKeyByQuery("top_films")
+        } ?: return InitializeAction.LAUNCH_INITIAL_REFRESH
 
-//    override suspend fun initialize(): InitializeAction {
-//        val remoteKey = filmsDb.withTransaction {
-//            remoteKeyDao.remoteKeyByQuery("top_films")
-//        } ?: return InitializeAction.LAUNCH_INITIAL_REFRESH
-//
-//        val cacheTimeout = TimeUnit.HOURS.convert(1, TimeUnit.MILLISECONDS)
-//
-//        return if((System.currentTimeMillis() - remoteKey.last_updated) >= cacheTimeout) {
-//            InitializeAction.SKIP_INITIAL_REFRESH
-//        } else {
-//            InitializeAction.LAUNCH_INITIAL_REFRESH
-//        }
-//    }
+        val cacheTimeout = TimeUnit.HOURS.convert(1, TimeUnit.MILLISECONDS)
+
+        return if((System.currentTimeMillis() - remoteKey.last_updated) >= cacheTimeout) {
+            InitializeAction.SKIP_INITIAL_REFRESH
+        } else {
+            InitializeAction.LAUNCH_INITIAL_REFRESH
+        }
+    }
 
     override suspend fun load(
         loadType: LoadType,

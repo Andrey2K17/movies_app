@@ -29,8 +29,6 @@ class TopFilmsAdapterPaging :
             )
         )
     }
-
-
 }
 
 object TopFilmsDiffCallbackPaging : DiffUtil.ItemCallback<Films.Film>() {
@@ -39,6 +37,6 @@ object TopFilmsDiffCallbackPaging : DiffUtil.ItemCallback<Films.Film>() {
     }
 
     override fun areContentsTheSame(oldItem: Films.Film, newItem: Films.Film): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.filmId == newItem.filmId
     }
 }

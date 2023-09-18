@@ -21,13 +21,5 @@ data class Films(
         val ratingVoteCount: Int,
         val year: String,
         val favorite: Boolean = false
-    ) {
-        data class Country(
-            val country: String
-        )
-
-        data class Genre(
-            val genre: String
-        )
-    }
+    )
 }

@@ -1,8 +1,13 @@
 package com.pg13.data.mappers
 
-import com.pg13.data.remote.entities.FilmsRemote
 import com.pg13.data.local.entities.FilmEntity
+import com.pg13.data.remote.entities.CountryRemote
+import com.pg13.data.remote.entities.FilmsRemote
+import com.pg13.data.remote.entities.GenreRemote
+import com.pg13.data.remote.entities.SearchFilmRemote
+import com.pg13.domain.entities.Country
 import com.pg13.domain.entities.Films
+import com.pg13.domain.entities.Genre
 
 fun FilmsRemote.mapToDomain(): Films = Films(films.map { it.mapToDomain() }, pagesCount);
 
@@ -10,48 +15,47 @@ fun FilmsRemote.FilmRemote.mapToDomain(): Films.Film = Films.Film(
     0,
     countries.map { it.mapToDomain() },
     filmId,
-    filmLength,
+    filmLength ?: "",
     genres.map { it.mapToDomain() },
-    isAfisha,
+    isAfisha ?: 0,
     isRatingUp,
     nameEn,
     nameRu,
-    posterUrl,
-    posterUrlPreview,
-    rating,
+    posterUrl ?: "",
+    posterUrlPreview ?: "",
+    rating ?: "",
     ratingChange,
-    ratingVoteCount,
-    year
+    ratingVoteCount ?: 0,
+    year ?: ""
 )
 
-fun FilmsRemote.FilmRemote.CountryRemote.mapToDomain(): Films.Film.Country =
-    Films.Film.Country(country)
+fun CountryRemote.mapToDomain(): Country = Country(country)
 
-fun FilmsRemote.FilmRemote.GenreRemote.mapToDomain(): Films.Film.Genre = Films.Film.Genre(genre)
+fun GenreRemote.mapToDomain(): Genre = Genre(genre)
 
 fun FilmsRemote.FilmRemote.mapToLocal(): FilmEntity = FilmEntity(
     id = 0,
     filmId,
     countries.map { it.country },
-    filmLength,
+    filmLength ?: "",
     genres.map { it.genre },
-    isAfisha,
+    isAfisha ?: 0,
     nameEn,
     nameRu,
-    posterUrl,
-    posterUrlPreview,
-    rating,
-    ratingVoteCount,
-    year,
+    posterUrl ?: "",
+    posterUrlPreview ?: "",
+    rating ?: "",
+    ratingVoteCount ?: 0,
+    year ?: "",
     System.currentTimeMillis()
 )
 
 fun FilmEntity.mapToDomain(): Films.Film = Films.Film(
     id,
-    countries.map { Films.Film.Country(it) },
+    countries.map { Country(it) },
     filmId,
     filmLength,
-    genres.map { Films.Film.Genre(it) },
+    genres.map { Genre(it) },
     isAfisha,
     null,
     nameEn,
@@ -62,4 +66,23 @@ fun FilmEntity.mapToDomain(): Films.Film = Films.Film(
     null,
     ratingVoteCount,
     year
+)
+
+fun SearchFilmRemote.FilmRemote.mapToDomain(): Films.Film = Films.Film(
+    0,
+    countries.map { it.mapToDomain() },
+    //description ?: "",
+    filmId,
+    filmLength ?: "",
+    genres.map { it.mapToDomain() },
+    isAfisha = 0,
+    isRatingUp = null,
+    nameEn ?: "",
+    nameRu ?: "",
+    posterUrl ?: "",
+    posterUrlPreview ?: "",
+    rating ?: "",
+    ratingChange = null,
+    ratingVoteCount ?: 0,
+    year ?: ""
 )
