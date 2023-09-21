@@ -14,6 +14,27 @@ interface ApiService {
         @Query("page") @IntRange(from = 1) page: Int = 1
     ): Response<FilmsRemote>
 
+    @GET("api/v2.2/films")
+    suspend fun getFilmsByOrder(
+        @Query("type") type: String = "ALL",
+        @Query("ratingFrom") ratingFrom: Int = 0,
+        @Query("ratingTo") ratingTo: Int = 10,
+        @Query("yearFrom") yearFrom: Int = 1000,
+        @Query("yearTo") yearTo: Int = 3000,
+        @Query("page") @IntRange(from = 1) page: Int = 1,
+    ): Response<FilmsRemote>
+
+    @GET("api/v2.2/films")
+    suspend fun getFilmsByOrder(
+        @Query("order") order: String = "",
+        @Query("type") type: String = "ALL",
+        @Query("ratingFrom") ratingFrom: Int = 0,
+        @Query("ratingTo") ratingTo: Int = 10,
+        @Query("yearFrom") yearFrom: Int = 1000,
+        @Query("yearTo") yearTo: Int = 3000,
+        @Query("page") @IntRange(from = 1) page: Int = 1,
+    ): Response<FilmsRemote>
+
     @GET("api/v2.1/films/search-by-keyword")
     suspend fun searchFilmByKeyword(
         @Query("keyword") keyword: String,

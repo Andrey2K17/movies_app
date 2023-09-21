@@ -1,5 +1,6 @@
 package com.pg13.moviesapp.ui.top_flims
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -33,10 +34,10 @@ class TopFilmsAdapterPaging :
 
 object TopFilmsDiffCallbackPaging : DiffUtil.ItemCallback<Films.Film>() {
     override fun areItemsTheSame(oldItem: Films.Film, newItem: Films.Film): Boolean {
-        return oldItem == newItem
+        return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(oldItem: Films.Film, newItem: Films.Film): Boolean {
-        return oldItem.filmId == newItem.filmId
+        return oldItem == newItem
     }
 }

@@ -1,5 +1,7 @@
 package com.pg13.data.remote.entities
 
+import com.google.gson.annotations.SerializedName
+
 
 data class SearchFilmRemote(
     val films: List<FilmRemote>,
@@ -8,18 +10,9 @@ data class SearchFilmRemote(
     val searchFilmsCountResult: Int
 ) {
     data class FilmRemote(
-        val countries: List<CountryRemote>,
-        val description: String?,
         val filmId: Int,
-        val filmLength: String?,
-        val genres: List<GenreRemote>,
-        val nameEn: String?,
-        val nameRu: String?,
-        val posterUrl: String?,
+        @SerializedName("nameRu") val name: String?,
+        val rating: String,
         val posterUrlPreview: String?,
-        val rating: String?,
-        val ratingVoteCount: Int?,
-        val type: String?,
-        val year: String?
     )
 }

@@ -10,6 +10,7 @@ import com.pg13.data.mappers.mapToDomain
 import com.pg13.data.mediator.FilmMediator
 import com.pg13.data.remote.service.ApiService
 import com.pg13.domain.entities.Films
+import com.pg13.domain.entities.OrderType
 import com.pg13.domain.repositories.FilmsTopRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -19,7 +20,7 @@ class FilmTopRepositoryImpl(
     private val database: Database
 ): FilmsTopRepository {
     @OptIn(ExperimentalPagingApi::class)
-    override fun getFilmsTop(): Flow<PagingData<Films.Film>> {
+    override fun getFilmsTop(order: OrderType): Flow<PagingData<Films.Film>> {
         val dbSource = {
             database.filmDao().getPagingFilms()
         }
@@ -28,7 +29,7 @@ class FilmTopRepositoryImpl(
                 pageSize = 20
             ),
             remoteMediator = FilmMediator(
-                database, service
+                database, service, order
             ),
             pagingSourceFactory = dbSource
         )

@@ -35,6 +35,6 @@ object TopFilmsDiffCallback : DiffUtil.ItemCallback<Films.Film>() {
     }
 
     override fun areContentsTheSame(oldItem: Films.Film, newItem: Films.Film): Boolean {
-        return oldItem.filmId == newItem.filmId
+        return oldItem.id == newItem.id
     }
 }

@@ -3,4 +3,8 @@
 
     <string name="dialog_title_error">Ошибка</string>
     <string name="dialog_button_ok" >OK</string>
+    <string name="by_default">По умолчанию</string>
+    <string name="by_popularity">По популярности</string>
+    <string name="by_rating">По рейтингу</string>
+    <string name="by_year">По году</string>
 </resources>

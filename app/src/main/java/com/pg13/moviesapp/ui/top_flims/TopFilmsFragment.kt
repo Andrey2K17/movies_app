@@ -8,6 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.pg13.domain.entities.OrderType
 import com.pg13.moviesapp.R
 import com.pg13.moviesapp.databinding.FragmentTopFilmsBinding
 import com.pg13.moviesapp.ui.base.ViewBindingFragment
@@ -27,7 +28,7 @@ class TopFilmsFragment : ViewBindingFragment<FragmentTopFilmsBinding>() {
 
     private val adapter: TopFilmsAdapterPaging by lazy {
         TopFilmsAdapterPaging().apply {
-            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT
+            stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
     }
 
@@ -81,6 +82,28 @@ class TopFilmsFragment : ViewBindingFragment<FragmentTopFilmsBinding>() {
                     )
                 )
             )
+
+            sortButton.setOnClickListener {
+                sortingButtons.visibility = if (sortingButtons.visibility == View.VISIBLE) View.GONE else View.VISIBLE
+            }
+
+            byPopularityTextView.setOnClickListener {
+                viewModel.updateFilms(OrderType.NUM_VOTE)
+                sortingButtons.visibility = View.GONE
+                query.text.clear()
+            }
+
+            byDefaultTextView.setOnClickListener {
+                viewModel.updateFilms(OrderType.DEFAULT)
+                sortingButtons.visibility = View.GONE
+                query.text.clear()
+            }
+
+            byRatingTextView.setOnClickListener {
+                viewModel.updateFilms(OrderType.RATING)
+                sortingButtons.visibility = View.GONE
+                query.text.clear()
+            }
         }
     }
 

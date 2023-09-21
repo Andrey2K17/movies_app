@@ -1,5 +1,6 @@
 package com.pg13.moviesapp.ui.top_flims
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -10,6 +11,7 @@ import androidx.paging.cachedIn
 import com.pg13.domain.entities.Films
 import com.pg13.domain.usecases.GetTopFilmsUseCase
 import com.pg13.domain.usecases.SearchFilmsUseCase
+import com.pg13.domain.entities.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -36,6 +38,8 @@ class FilmsViewModel @Inject constructor(
 
     private val refreshEvent = MutableSharedFlow<Unit>(1)
 
+    private var order: OrderType = OrderType.EMPTY
+
     init {
         viewModelScope.launch {
             updateFilms()
@@ -46,25 +50,32 @@ class FilmsViewModel @Inject constructor(
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query.asStateFlow()
 
-    private var newPagingSource: PagingSource<*, *>? = null
+    //private var newPagingSource: PagingSource<*, *>? = null
 
-
-    val films =
-        refreshEvent.flatMapLatest { getTopFilmsUseCase.invoke() }
-            .flowOn(Dispatchers.IO)
+    val films: StateFlow<PagingData<Films.Film>> =
+        refreshEvent.flatMapLatest { getTopFilmsUseCase.invoke(order) }
             .cachedIn(viewModelScope)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Lazily,
+                initialValue = PagingData.empty()
+            )
+            //.flowOn(Dispatchers.IO)
+
 
 
     val searchFilms: StateFlow<PagingData<Films.Film>> = query
         .map(::newPager)
         .flatMapLatest { pager -> pager.flow }
+        .cachedIn(viewModelScope)
         .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
     private fun newPager(query: String): Pager<Int, Films.Film> {
         return Pager(PagingConfig(5, enablePlaceholders = false)) {
-            newPagingSource?.invalidate()
+            //newPagingSource?.invalidate()
             val queryNewsUseCase = searchFilmsUseCase
-            queryNewsUseCase(query).also { newPagingSource = it }
+            queryNewsUseCase(query)
+                //.also { newPagingSource = it }
         }
     }
 
@@ -72,7 +83,8 @@ class FilmsViewModel @Inject constructor(
         _query.tryEmit(query)
     }
 
-    fun updateFilms() {
+    fun updateFilms(order: OrderType = OrderType.EMPTY) {
+        this.order = order
         viewModelScope.launch {
             refreshEvent.emit(Unit)
             cancel()

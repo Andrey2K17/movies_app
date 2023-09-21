@@ -11,6 +11,7 @@ import com.pg13.data.local.entities.RemoteKey
 import com.pg13.data.mappers.mapToLocal
 import com.pg13.data.remote.service.ApiService
 import com.pg13.data.util.networkBoundResource
+import com.pg13.domain.entities.OrderType
 import com.pg13.domain.entities.Resource
 import kotlinx.coroutines.flow.toList
 import retrofit2.HttpException
@@ -20,7 +21,8 @@ import java.util.concurrent.TimeUnit
 @OptIn(ExperimentalPagingApi::class)
 class FilmMediator(
     private val database: Database,
-    private val service: ApiService
+    private val service: ApiService,
+    private val order: OrderType
 ) : RemoteMediator<Int, FilmEntity>() {
 
     private var pageIndex = 1
@@ -32,9 +34,9 @@ class FilmMediator(
             remoteKeyDao.remoteKeyByQuery("top_films")
         } ?: return InitializeAction.LAUNCH_INITIAL_REFRESH
 
-        val cacheTimeout = TimeUnit.HOURS.convert(1, TimeUnit.MILLISECONDS)
+        val cacheTimeout = TimeUnit.MILLISECONDS.convert(1, TimeUnit.HOURS)
 
-        return if((System.currentTimeMillis() - remoteKey.last_updated) >= cacheTimeout) {
+        return if (order == OrderType.EMPTY && (System.currentTimeMillis() - remoteKey.last_updated) <= cacheTimeout) {
             InitializeAction.SKIP_INITIAL_REFRESH
         } else {
             InitializeAction.LAUNCH_INITIAL_REFRESH
@@ -47,33 +49,39 @@ class FilmMediator(
     ): MediatorResult {
 
         return try {
-        pageIndex = when (loadType) {
-            LoadType.REFRESH -> {
-                1
-            }
-            LoadType.PREPEND -> {
-                return MediatorResult.Success(
-                    endOfPaginationReached = true
-                )
-            }
-
-            LoadType.APPEND -> {
-                val remoteKey = database.withTransaction {
-                    remoteKeyDao.remoteKeyByQuery("top_films")
-                } ?: return MediatorResult.Success(true)
-
-                if (remoteKey.next_page == null) {
-                    return MediatorResult.Success(true)
+            pageIndex = when (loadType) {
+                LoadType.REFRESH -> {
+                    1
                 }
 
-                remoteKey.next_page
+                LoadType.PREPEND -> {
+                    return MediatorResult.Success(
+                        endOfPaginationReached = true
+                    )
+                }
 
+                LoadType.APPEND -> {
+                    val remoteKey = database.withTransaction {
+                        remoteKeyDao.remoteKeyByQuery("top_films")
+                    } ?: return MediatorResult.Success(true)
+
+                    if (remoteKey.next_page == null) {
+                        return MediatorResult.Success(true)
+                    }
+
+                    remoteKey.next_page
+
+                }
             }
-        }
 
             val filmsFlow = networkBoundResource(
-                { service.getFilmsTop(page = pageIndex) },
-                { it -> it.films.map { it.mapToLocal() } }
+                {
+                    if (order.type.isEmpty()) service.getFilmsByOrder(page = pageIndex) else service.getFilmsByOrder(
+                        page = pageIndex,
+                        order = order.type
+                    )
+                },
+                { it -> it.items.map { it.mapToLocal() } }
             )
 
             when (val filmsData = filmsFlow.toList().last()) {
@@ -84,10 +92,10 @@ class FilmMediator(
                             filmsDao.clearFilms()
                         }
 
-                        val nextPage = if(filmsData.data!!.isEmpty()) {
+                        val nextPage = if (filmsData.data.isEmpty()) {
                             null
                         } else {
-                            pageIndex+1
+                            pageIndex + 1
                         }
 
                         remoteKeyDao.insertOrReplace(

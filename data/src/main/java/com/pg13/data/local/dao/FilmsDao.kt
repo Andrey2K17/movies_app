@@ -14,8 +14,11 @@ interface FilmsDao {
     @Upsert
     suspend fun saveFilms(list: List<FilmEntity>)
 
-    @Query("SELECT * FROM films ORDER BY rating DESC")
+    @Query("SELECT * FROM films")
     fun getPagingFilms(): PagingSource<Int, FilmEntity>
+
+//    @Query("SELECT * FROM films ORDER BY rating DESC")
+//    fun getPagingFilms(): PagingSource<Int, FilmEntity>
 
     @Query("DELETE FROM films")
     suspend fun clearFilms()

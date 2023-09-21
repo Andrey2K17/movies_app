@@ -39,11 +39,11 @@ class FilmsModule {
         return FilmTopRepositoryImpl(service, database)
     }
 
-    @Singleton
-    @Provides
-    fun provideFilmRemoteMediator(db: Database, api: ApiService): FilmMediator {
-        return FilmMediator(db, api)
-    }
+//    @Singleton
+//    @Provides
+//    fun provideFilmRemoteMediator(db: Database, api: ApiService): FilmMediator {
+//        return FilmMediator(db, api)
+//    }
 
     @Singleton
     @Provides
