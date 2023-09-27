@@ -9,6 +9,6 @@ data class Films(
         val name: String?,
         val rating: Double?,
         val posterUrlPreview: String?,
-        val favorite: Boolean = false
+        var favorite: Boolean
     )
 }

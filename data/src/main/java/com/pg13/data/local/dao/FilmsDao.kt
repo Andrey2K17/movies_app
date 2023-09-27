@@ -8,17 +8,14 @@ import com.pg13.data.local.entities.FilmEntity
 
 @Dao
 interface FilmsDao {
-//    @Query("SELECT * FROM films")
-//    suspend fun getAll(): List<FilmsLocal>
-
     @Upsert
     suspend fun saveFilms(list: List<FilmEntity>)
 
+    @Query("UPDATE films SET favorite = :favorite WHERE film_id = :filmId")
+    suspend fun updateFilm(favorite: Boolean, filmId: Int): Int
+
     @Query("SELECT * FROM films")
     fun getPagingFilms(): PagingSource<Int, FilmEntity>
-
-//    @Query("SELECT * FROM films ORDER BY rating DESC")
-//    fun getPagingFilms(): PagingSource<Int, FilmEntity>
 
     @Query("DELETE FROM films")
     suspend fun clearFilms()

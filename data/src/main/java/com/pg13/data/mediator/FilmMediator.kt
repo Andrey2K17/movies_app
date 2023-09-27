@@ -8,7 +8,8 @@ import androidx.room.withTransaction
 import com.pg13.data.local.Database
 import com.pg13.data.local.entities.FilmEntity
 import com.pg13.data.local.entities.RemoteKey
-import com.pg13.data.mappers.mapToLocal
+import com.pg13.data.mappers.mapToDomain
+import com.pg13.data.mappers.mapToFavoriteFilmLocal
 import com.pg13.data.remote.service.ApiService
 import com.pg13.data.util.networkBoundResource
 import com.pg13.domain.entities.OrderType
@@ -81,7 +82,7 @@ class FilmMediator(
                         order = order.type
                     )
                 },
-                { it -> it.items.map { it.mapToLocal() } }
+                { it -> it.items.map { it.mapToFavoriteFilmLocal() } }
             )
 
             when (val filmsData = filmsFlow.toList().last()) {
@@ -105,7 +106,14 @@ class FilmMediator(
                                 last_updated = System.currentTimeMillis()
                             )
                         )
-                        filmsDao.saveFilms(filmsData.data)
+
+                        val favoriteFilms = database.favoriteFilmDao().getFilms().map { it.mapToDomain() }
+                        val remoteFilms = filmsData.data
+                        val films = remoteFilms.onEach {
+                            it.favorite = favoriteFilms.any { favoriteFilms -> favoriteFilms.filmId == it.filmId }
+                        }
+
+                        filmsDao.saveFilms(films)
                     }
 
                     MediatorResult.Success(

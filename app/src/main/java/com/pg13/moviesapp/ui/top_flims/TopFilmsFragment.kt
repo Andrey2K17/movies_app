@@ -8,11 +8,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.pg13.domain.entities.Films
 import com.pg13.domain.entities.OrderType
 import com.pg13.moviesapp.R
 import com.pg13.moviesapp.databinding.FragmentTopFilmsBinding
 import com.pg13.moviesapp.ui.base.ViewBindingFragment
 import com.pg13.moviesapp.utils.launchOnLifecycle
+import com.pg13.moviesapp.utils.toStringOrEmpty
 import com.pg13.mycitchen.ui.rv.HorizontalSpaceItemDecoration
 import com.pg13.mycitchen.ui.rv.VerticalSpaceItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,7 +29,7 @@ class TopFilmsFragment : ViewBindingFragment<FragmentTopFilmsBinding>() {
     private val viewModel: FilmsViewModel by viewModels()
 
     private val adapter: TopFilmsAdapterPaging by lazy {
-        TopFilmsAdapterPaging().apply {
+        TopFilmsAdapterPaging(this::adapterOnClickFavorite).apply {
             stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         }
     }
@@ -48,7 +50,7 @@ class TopFilmsFragment : ViewBindingFragment<FragmentTopFilmsBinding>() {
 //            }
 
             query.doAfterTextChanged { text ->
-                viewModel.setQuery(text?.toString() ?: "")
+                viewModel.setQuery(text.toStringOrEmpty())
             }
 
             launchOnLifecycle {
@@ -60,6 +62,12 @@ class TopFilmsFragment : ViewBindingFragment<FragmentTopFilmsBinding>() {
             launchOnLifecycle {
                 viewModel.films.collect { data ->
                     adapter.submitData(data)
+                }
+            }
+
+            launchOnLifecycle {
+                viewModel.favoriteFilmsIsEmpty.collectLatest {
+                    favoritesButton.visibility = if (it) View.GONE else View.VISIBLE
                 }
             }
 
@@ -87,24 +95,16 @@ class TopFilmsFragment : ViewBindingFragment<FragmentTopFilmsBinding>() {
                 sortingButtons.visibility = if (sortingButtons.visibility == View.VISIBLE) View.GONE else View.VISIBLE
             }
 
-            byPopularityTextView.setOnClickListener {
-                viewModel.updateFilms(OrderType.NUM_VOTE)
-                sortingButtons.visibility = View.GONE
-                query.text.clear()
-            }
-
-            byDefaultTextView.setOnClickListener {
-                viewModel.updateFilms(OrderType.DEFAULT)
-                sortingButtons.visibility = View.GONE
-                query.text.clear()
-            }
-
-            byRatingTextView.setOnClickListener {
-                viewModel.updateFilms(OrderType.RATING)
-                sortingButtons.visibility = View.GONE
-                query.text.clear()
-            }
+            byPopularityTextView.setOnClickListener { updateFilms(OrderType.NUM_VOTE) }
+            byDefaultTextView.setOnClickListener { updateFilms(OrderType.DEFAULT) }
+            byRatingTextView.setOnClickListener { updateFilms(OrderType.RATING) }
         }
+    }
+
+    private fun updateFilms(orderType: OrderType) {
+        viewModel.updateFilms(orderType)
+        binding.sortingButtons.visibility = View.GONE
+        binding.query.text.clear()
     }
 
     private fun updateSearchQuery(searchQuery: String) {
@@ -112,9 +112,13 @@ class TopFilmsFragment : ViewBindingFragment<FragmentTopFilmsBinding>() {
             if (text.isEmpty()) {
                 viewModel.updateFilms()
             }
-            if ((text?.toString() ?: "") != searchQuery) {
+            if ((text.toStringOrEmpty()) != searchQuery) {
                 setText(searchQuery)
             }
         }
+    }
+
+    private fun adapterOnClickFavorite(film: Films.Film) {
+        viewModel.addToFavorite(film)
     }
 }

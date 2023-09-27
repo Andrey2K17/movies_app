@@ -1,17 +1,17 @@
 package com.pg13.moviesapp.ui.top_flims
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import com.pg13.domain.entities.Films
+import com.pg13.domain.entities.OrderType
+import com.pg13.domain.usecases.AddToFavoriteUseCase
+import com.pg13.domain.usecases.FavoriteFilmsSizeUseCase
 import com.pg13.domain.usecases.GetTopFilmsUseCase
 import com.pg13.domain.usecases.SearchFilmsUseCase
-import com.pg13.domain.entities.OrderType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -30,7 +29,9 @@ import javax.inject.Inject
 @HiltViewModel
 class FilmsViewModel @Inject constructor(
     getTopFilmsUseCase: GetTopFilmsUseCase,
-    private val searchFilmsUseCase: SearchFilmsUseCase
+    private val searchFilmsUseCase: SearchFilmsUseCase,
+    private val addToFavoriteUseCase: AddToFavoriteUseCase,
+    private val favoriteFilmsSizeUseCase: FavoriteFilmsSizeUseCase
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(true)
@@ -40,10 +41,14 @@ class FilmsViewModel @Inject constructor(
 
     private var order: OrderType = OrderType.EMPTY
 
+    private val _favoriteFilmsIsEmpty = MutableStateFlow(true)
+    val favoriteFilmsIsEmpty = _favoriteFilmsIsEmpty.asStateFlow()
+
     init {
         viewModelScope.launch {
             updateFilms()
             _isLoading.value = false
+            getFavoriteFilmsSize()
         }
     }
 
@@ -60,7 +65,6 @@ class FilmsViewModel @Inject constructor(
                 started = SharingStarted.Lazily,
                 initialValue = PagingData.empty()
             )
-            //.flowOn(Dispatchers.IO)
 
 
 
@@ -88,6 +92,25 @@ class FilmsViewModel @Inject constructor(
         viewModelScope.launch {
             refreshEvent.emit(Unit)
             cancel()
+        }
+    }
+
+    fun addToFavorite(film: Films.Film) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val row: Int = addToFavoriteUseCase.invoke(film)
+            if (row != -1) {
+                updateFilms(order)
+                getFavoriteFilmsSize()
+            }
+        }
+    }
+
+    private fun getFavoriteFilmsSize() {
+        viewModelScope.launch {
+            val isEmpty = favoriteFilmsSizeUseCase.invoke() == 0
+            if (isEmpty != _favoriteFilmsIsEmpty.value) {
+                _favoriteFilmsIsEmpty.value = !_favoriteFilmsIsEmpty.value
+            }
         }
     }
 }

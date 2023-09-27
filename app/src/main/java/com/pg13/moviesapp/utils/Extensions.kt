@@ -34,3 +34,5 @@ fun Context.showErrorDialog(message: String) {
 }
 
 fun Fragment.showErrorDialog(message: String) = requireContext().showErrorDialog(message)
+
+fun Any?.toStringOrEmpty() = this?.toString() ?: ""

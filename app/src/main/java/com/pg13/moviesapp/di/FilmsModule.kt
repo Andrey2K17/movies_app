@@ -2,13 +2,18 @@ package com.pg13.moviesapp.di
 
 import com.pg13.data.local.Database
 import com.pg13.data.local.dao.FilmsDao
-import com.pg13.data.mediator.FilmMediator
+import com.pg13.data.pagingsource.FavoriteFilmPagingSource
 import com.pg13.data.pagingsource.SearchFilmsPagingSource
 import com.pg13.data.remote.service.ApiService
+import com.pg13.data.repositories.FavoriteFilmRepositoryImpl
 import com.pg13.data.repositories.FilmTopRepositoryImpl
 import com.pg13.data.repositories.SearchFilmRepositoryImpl
+import com.pg13.domain.repositories.FavoriteFilmsRepository
 import com.pg13.domain.repositories.FilmsTopRepository
 import com.pg13.domain.repositories.SearchFilmRepository
+import com.pg13.domain.usecases.AddToFavoriteUseCase
+import com.pg13.domain.usecases.FavoriteFilmsSizeUseCase
+import com.pg13.domain.usecases.FavoriteFilmsUseCase
 import com.pg13.domain.usecases.GetTopFilmsUseCase
 import com.pg13.domain.usecases.SearchFilmsUseCase
 import dagger.Module
@@ -39,12 +44,6 @@ class FilmsModule {
         return FilmTopRepositoryImpl(service, database)
     }
 
-//    @Singleton
-//    @Provides
-//    fun provideFilmRemoteMediator(db: Database, api: ApiService): FilmMediator {
-//        return FilmMediator(db, api)
-//    }
-
     @Singleton
     @Provides
     fun provideSearchFilmsUseCase(repository: SearchFilmRepository): SearchFilmsUseCase {
@@ -68,4 +67,35 @@ class FilmsModule {
             }
         }
     }
+
+    @Singleton
+    @Provides
+    fun provideFavoriteFilmsRepository(favoriteFilmsPagingSource: FavoriteFilmPagingSource, database: Database): FavoriteFilmsRepository {
+        return FavoriteFilmRepositoryImpl(favoriteFilmsPagingSource, database)
+    }
+
+    @Singleton
+    @Provides
+    fun provideFavoriteFilmPagingSource(database: Database): FavoriteFilmPagingSource {
+        return FavoriteFilmPagingSource(database.favoriteFilmDao())
+    }
+
+    @Singleton
+    @Provides
+    fun provideFavoriteFilmsUseCase(repository: FavoriteFilmsRepository): FavoriteFilmsUseCase {
+        return FavoriteFilmsUseCase(repository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAddFavoriteFilmUseCase(repository: FavoriteFilmsRepository): AddToFavoriteUseCase {
+        return AddToFavoriteUseCase(repository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideFavoriteFilmsSizeUseCase(repository: FavoriteFilmsRepository): FavoriteFilmsSizeUseCase {
+        return FavoriteFilmsSizeUseCase(repository)
+    }
+
 }
